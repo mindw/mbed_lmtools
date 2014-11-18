@@ -15,12 +15,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import os
 import re
-import json
-import optparse
 import subprocess
-from prettytable import PrettyTable
 
 from lmtools_base import LmToolsBase
 
@@ -37,16 +33,53 @@ class LmToolsUbuntu(LmToolsBase):
         self.mount_media_pattern = "^/[a-zA-Z0-9/]* on (/[a-zA-Z0-9/]*) "
 
     def list_mbeds(self):
-        result = None
+        # We harness information about what is mounted and connected to serial ports
         disk_ids = self.get_dev_by_id('disk')
         serial_ids = self.get_dev_by_id('serial')
         mount_ids = self.get_mounts()
 
-        tids = {}
-
+        # Extra data to identify mbeds by target_id
+        tids = self.manufacture_ids
+        # Listing known and undetected / orphan devices
         mbeds = self.get_(tids, disk_ids, serial_ids, mount_ids)
         orphans = self.get_not_detected(tids, disk_ids, serial_ids, mount_ids)
         all_devices = mbeds + orphans
+
+        """
+        all_devices =
+        [
+            ['*not detected', 'sdi', '/media/usb3', '/dev/ttyACM7', 'usb-MBED_microcontroller_066EFF534951775087215736-0:0 -> ../../sdi'],
+            ['*not detected', 'sdg', '/media/usb5', '/dev/ttyACM5', 'usb-MBED_microcontroller_066EFF525257775087141721-0:0 -> ../../sdg'],
+            ['*not detected', 'sdf', '/media/przemek/NUCLEO', '/dev/ttyACM4', 'usb-MBED_microcontroller_0671FF534951775087131543-0:0 -> ../../sdf'],
+            ['*not detected', 'sdd', '/media/usb4', '/dev/ttyACM2', 'usb-MBED_microcontroller_0670FF494951785087152739-0:0 -> ../../sdd'],
+            ['*not detected', 'sdb', '/media/usb0', '/dev/ttyACM0', 'usb-MBED_microcontroller_0674FF484951775087083114-0:0 -> ../../sdb'],
+            ['*not detected', 'sdh', '/media/usb6', '/dev/ttyACM6', 'usb-MBED_microcontroller_066FFF525257775087155144-0:0 -> ../../sdh'],
+            ['*not detected', 'sdc', '/media/usb1', '/dev/ttyACM1', 'usb-MBED_microcontroller_066AFF494956805087155327-0:0 -> ../../sdc'],
+            ['*not detected', 'sde', '/media/usb2', '/dev/ttyACM3', 'usb-MBED_microcontroller_066CFF534951775087112139-0:0 -> ../../sde']
+        ]
+
+        MBED
+        {
+            'mount_point' : <>,
+            'serial_port' : <>,
+            'target_id' : <>,
+            'platform_name' : <>,
+        }
+
+        """
+        result = []
+        tidhex = re.compile(r'_([0-9a-fA-F]+)')
+        for device in all_devices:
+            tid = None
+            m = tidhex.search(device[4])
+            if m and len(m.groups()):
+                tid = m.group(1)
+            mbed = {'mount_point' : device[2],
+                    'serial_port' : device[3],
+                    'target_id' : tid,
+                    'platform_name' : device[0],
+            result.append(mbed)
+        }
         return all_devices
 
     # Private methods
@@ -180,11 +213,12 @@ class LmToolsUbuntu(LmToolsBase):
                 orphan_dev_serial = '/dev/' + self.get_dev_name(orphan_serial)
                 orphan_mount_point = self.get_mount_point(orphan_dev_disk, mount_list)
                 if orphan_mount_point and orphan_dev_serial:
-                    result.append([ "*not detected", orphan_dev_disk, orphan_mount_point, orphan_dev_serial, disk_hex_ids[dhi]])
+                    result.append([ None, orphan_dev_disk, orphan_mount_point, orphan_dev_serial, disk_hex_ids[dhi]])
         return result
 
     def get_tid_mbed_name_remap(self, tids):
-        """ Remap to get TID -> mbed name mapping """
+        """ Remap to get mapping:  ID -> mbed name
+        """
         map_tid_to_mbed = {}
         if tids:
             for key in tids:
@@ -202,7 +236,7 @@ class LmToolsUbuntu(LmToolsBase):
         return mbed_dev
 
     def get_mount_point(self, dev_name, mount_list):
-        """ Find mount points for MBED devices using mount command output  """ 
+        """ Find mount points for MBED devices using mount command output  """
         mount_media_pattern = "^/[a-zA-Z0-9/]*/" + dev_name  + " on (/[a-zA-Z0-9/]*) "
         mmp = re.compile(mount_media_pattern)
         for mount in mount_list:
