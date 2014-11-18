@@ -93,7 +93,7 @@ class LmToolsUbuntu(LmToolsBase):
 
     def get_mbed_serial(self, serial_list, dhi):
         """ Get mbed serial by unique hex id (dhi) in disk name  """
-        nlp = re.compile(name_link_pattern)
+        nlp = re.compile(self.name_link_pattern)
         for sl in serial_list:
             if dhi in sl:
                 m = nlp.search(sl)
@@ -138,7 +138,7 @@ class LmToolsUbuntu(LmToolsBase):
                     mbed_dev_disk = self.get_dev_name(disk_link) # m.group(1) if m and len(m.groups()) else "unknown"
                     mbed_dev_serial = self.get_mbed_serial(serial_list, dhi)
                     # Print detected device
-                    mbed_mount_point = get_mount_point(mbed_dev_disk, mount_list)
+                    mbed_mount_point = self.get_mount_point(mbed_dev_disk, mount_list)
                     if mbed_mount_point and  mbed_dev_serial:
                         result.append([mbed_name, mbed_dev_disk, mbed_mount_point, mbed_dev_serial, disk_hex_ids[dhi]])
         return result
@@ -177,8 +177,8 @@ class LmToolsUbuntu(LmToolsBase):
             orphan_serial = self.get_mbed_serial(serial_list, dhi)
             if orphan_serial:
                 orphan_dev_disk = self.get_dev_name(disk_hex_ids[dhi])
-                orphan_dev_serial = "/dev/" + self.get_dev_name(orphan_serial)
-                orphan_mount_point = get_mount_point(orphan_dev_disk, mount_list)
+                orphan_dev_serial = '/dev/' + self.get_dev_name(orphan_serial)
+                orphan_mount_point = self.get_mount_point(orphan_dev_disk, mount_list)
                 if orphan_mount_point and orphan_dev_serial:
                     result.append([ "*not detected", orphan_dev_disk, orphan_mount_point, orphan_dev_serial, disk_hex_ids[dhi]])
         return result
@@ -201,6 +201,15 @@ class LmToolsUbuntu(LmToolsBase):
         mbed_dev = m.group(1) if m and len(m.groups()) else "unknown"
         return mbed_dev
 
+    def get_mount_point(self, dev_name, mount_list):
+        """ Find mount points for MBED devices using mount command output  """ 
+        mount_media_pattern = "^/[a-zA-Z0-9/]*/" + dev_name  + " on (/[a-zA-Z0-9/]*) "
+        mmp = re.compile(mount_media_pattern)
+        for mount in mount_list:
+            m = mmp.search(mount)
+            if m and len(m.groups()):
+                return m.group(1)
+        return None
 
 
 
