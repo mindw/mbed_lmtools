@@ -54,7 +54,3 @@ def lmtools_os_info():
               platform.version(),
               sys.platform)
     return result
-
-lmtools = lmtools_factory()
-print lmtools.list_mbeds()
-

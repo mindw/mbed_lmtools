@@ -15,13 +15,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import re
+import os
+import sys
 
 from lmtools_base import LmToolsBase
-import sys, os, re
 
 
 class LmToolsWin7(LmToolsBase):
-
     """ LmToolsWin7 supports mbed enabled platforms detection across Windows7 OS family
     """
     def __init__(self):
@@ -32,29 +33,17 @@ class LmToolsWin7(LmToolsBase):
         else:
             import winreg
         self.winreg = winreg
-        
+
     """Returns connected mbeds as an mbeds dictionary
     """
     def list_mbeds(self, manufact_ids={}):
         mbeds = []
         for mbed in self.discover_connected_mbeds(manufact_ids):
             d = {}
-            if mbed[0]:
-                d['mount_point'] = mbed[0]
-            else:
-                d['mount_point'] = None
-            if mbed[1]:
-                d['target_id'] = mbed[1]
-            else:
-                d['target_id'] = None
-            if mbed[2]:
-                d['serial_port'] = mbed[2]
-            else:
-                d['serial_port'] = None
-            if mbed[0]:
-                d['platform_name'] = mbed[3]
-            else:
-                d['platform_name'] = None
+            d['mount_point']   = mbed[0] if mbed[0] else None
+            d['target_id']     = mbed[1] if mbed[1] else None
+            d['serial_port']   = mbed[2] if mbed[2] else None
+            d['platform_name'] = mbed[3] if mbed[3] else None
             mbeds += [d]
         return mbeds
 
@@ -129,12 +118,9 @@ class LmToolsWin7(LmToolsBase):
             id = re.search('[0-9A-Fa-f]{10,36}', mbed[1]).group(0)
             mbeds += [(mountpoint, id)]
         return mbeds
-    
-    
-    
-    
+
     # =============================== Registry ====================================
-    
+
     """ Iterate over subkeys of a key returning subkey as string
     """
     def iter_keys_as_str(self, key):
@@ -185,6 +171,6 @@ class LmToolsWin7(LmToolsBase):
             elif isinstance(bin[i], str):
                 string += bin[i]
             else:
-                print("ERROR: Can't decode REG_BIN from registry")
-                exit(1)
+                string = None
+                break
         return string
