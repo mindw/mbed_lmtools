@@ -77,10 +77,10 @@ class LmToolsUbuntu(LmToolsBase):
             mbed = {'mount_point' : device[2],
                     'serial_port' : device[3],
                     'target_id' : tid,
-                    'platform_name' : device[0],
+                    'platform_name' : device[0]
+            }
             result.append(mbed)
-        }
-        return all_devices
+        return result
 
     # Private methods
 
