@@ -27,6 +27,7 @@ class LmToolsUbuntu(LmToolsBase):
     def __init__(self):
         """ ctor
         """
+        LmToolsBase.__init__(self)
         self.os_supported.append('Ubuntu')
         self.hex_uuid_pattern = "usb-[0-9a-zA-Z_-]*_([0-9a-zA-Z]*)-.*"
         self.name_link_pattern = "(usb-[0-9a-zA-Z_-]*_[0-9a-zA-Z]*-.*$)"
@@ -65,8 +66,8 @@ class LmToolsUbuntu(LmToolsBase):
             'target_id' : <>,
             'platform_name' : <>,
         }
-
         """
+
         result = []
         tidhex = re.compile(r'_([0-9a-fA-F]+)')
         for device in all_devices:
@@ -141,8 +142,6 @@ class LmToolsUbuntu(LmToolsBase):
         """
         # Regular expr. formulas
         hup = re.compile(self.hex_uuid_pattern)
-        nlp = re.compile(self.name_link_pattern)
-        mmp = re.compile(self.mount_media_pattern)
 
         # Find for all disk connected all MBED ones we know about from TID list
         disk_hex_ids = self.get_disk_hex_ids(disk_list)
@@ -176,16 +175,6 @@ class LmToolsUbuntu(LmToolsBase):
                         result.append([mbed_name, mbed_dev_disk, mbed_mount_point, mbed_dev_serial, disk_hex_ids[dhi]])
         return result
 
-    def get_tid_mbed_name_remap(self, tids):
-        """ Remap to get TID -> mbed name mapping
-        """
-        map_tid_to_mbed = {}
-        if tids:
-            for key in tids:
-                for v in tids[key]:
-                    map_tid_to_mbed[v] = key
-        return map_tid_to_mbed
-
     def get_not_detected(self, tids, disk_list, serial_list, mount_list):
         """ Find all unknown mbed enabled devices
         """
@@ -213,7 +202,7 @@ class LmToolsUbuntu(LmToolsBase):
                 orphan_dev_serial = '/dev/' + self.get_dev_name(orphan_serial)
                 orphan_mount_point = self.get_mount_point(orphan_dev_disk, mount_list)
                 if orphan_mount_point and orphan_dev_serial:
-                    result.append([ None, orphan_dev_disk, orphan_mount_point, orphan_dev_serial, disk_hex_ids[dhi]])
+                    result.append([None, orphan_dev_disk, orphan_mount_point, orphan_dev_serial, disk_hex_ids[dhi]])
         return result
 
     def get_tid_mbed_name_remap(self, tids):
@@ -244,16 +233,3 @@ class LmToolsUbuntu(LmToolsBase):
             if m and len(m.groups()):
                 return m.group(1)
         return None
-
-
-
-
-
-
-
-
-
-
-
-
-
