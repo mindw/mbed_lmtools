@@ -62,7 +62,12 @@ class LmToolsBase:
         print text
 
     def __str__(self):
-        """ Default printing with some sql table like decorators
+        """ Object to string casting
+        """
+        return self.get_string()
+
+    def get_string(self):
+        """ Printing with some sql table like decorators
         """
         from prettytable import PrettyTable
         result = ''
