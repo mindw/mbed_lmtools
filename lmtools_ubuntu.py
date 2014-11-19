@@ -164,9 +164,6 @@ class LmToolsUbuntu(LmToolsBase):
     def get_detected(self, tids, disk_list, serial_list, mount_list):
         """ Find all known mbed devices
         """
-        # Regular expr. formulas
-        hup = re.compile(self.hex_uuid_pattern)
-
         # Find for all disk connected all MBED ones we know about from TID list
         disk_hex_ids = self.get_disk_hex_ids(disk_list)
         map_tid_to_mbed = self.get_tid_mbed_name_remap(tids)
