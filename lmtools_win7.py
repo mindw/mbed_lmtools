@@ -23,9 +23,9 @@ from lmtools_base import LmToolsBase
 
 
 class LmToolsWin7(LmToolsBase):
-    """ LmToolsWin7 supports mbed enabled platforms detection across Windows7 OS family
-    """
     def __init__(self):
+        """ LmToolsWin7 supports mbed enabled platforms detection across Windows7 OS family
+        """
         LmToolsBase.__init__(self)
         self.os_supported.append('Windows7')
         if sys.version_info[0] < 3:
@@ -34,9 +34,9 @@ class LmToolsWin7(LmToolsBase):
             import winreg
         self.winreg = winreg
 
-    """Returns connected mbeds as an mbeds dictionary
-    """
     def list_mbeds(self, manufact_ids={}):
+        """Returns connected mbeds as an mbeds dictionary
+        """
         mbeds = []
         for mbed in self.discover_connected_mbeds(manufact_ids):
             d = {}
@@ -47,10 +47,10 @@ class LmToolsWin7(LmToolsBase):
             mbeds += [d]
         return mbeds
 
-    """Returns [(<mbed_mount_point>, <mbed_id>, <com port>, <board model>), ..]
-      (notice that this function is permissive: adds new elements in-places when and if found)
-    """
     def discover_connected_mbeds(self, defs={}):
+        """ Returns [(<mbed_mount_point>, <mbed_id>, <com port>, <board model>), ..]
+            Notice: this function is permissive: adds new elements in-places when and if found
+        """
         mbeds = [(m[0], m[1], None, None) for m in self.get_connected_mbeds()]
         for i in range(len(mbeds)):
             mbed = mbeds[i]
@@ -64,10 +64,10 @@ class LmToolsWin7(LmToolsBase):
                 mbeds[i] = (mnt, mbed_id, port, mbeds[i][3])
         return mbeds
 
-    """(This goes through a whole new loop, but this assures that even if
-        com is not detected, we still get the rest of info like mount point etc.)
-    """
     def get_mbed_com_port(self, id):
+        """ This goes through a whole new loop, but this assures that even if
+            serial port (COM) is not detected, we still get the rest of info like mount point etc.
+        """
         self.winreg.Enum = self.winreg.OpenKey(self.winreg.HKEY_LOCAL_MACHINE, r'SYSTEM\CurrentControlSet\Enum')
         usb_devs = self.winreg.OpenKey(self.winreg.Enum, 'USB')
 
@@ -103,14 +103,14 @@ class LmToolsWin7(LmToolsBase):
             except:
                 pass
 
-    """ Returns [(<mbed_mount_point>, <mbed_id>), ..]
-    """
     def get_connected_mbeds(self):
+        """ Returns [(<mbed_mount_point>, <mbed_id>), ..]
+        """
         return [m for m in self.get_mbeds() if os.path.exists(m[0])]
 
-    """ Returns [(<mbed_mount_point>, <mbed_id>), ..]
-    """
     def get_mbeds(self):
+        """ Returns [(<mbed_mount_point>, <mbed_id>), ..]
+        """
         mbeds = []
         for mbed in self.get_mbed_devices():
             mountpoint = re.match('.*\\\\(.:)$', mbed[0]).group(1)
@@ -121,47 +121,47 @@ class LmToolsWin7(LmToolsBase):
 
     # =============================== Registry ====================================
 
-    """ Iterate over subkeys of a key returning subkey as string
-    """
     def iter_keys_as_str(self, key):
+        """ Iterate over subkeys of a key returning subkey as string
+        """
         for i in range(self.winreg.QueryInfoKey(key)[0]):
             yield self.winreg.EnumKey(key, i)
 
-    """ Iterate over subkeys of a key
-    """
     def iter_keys(self, key):
+        """ Iterate over subkeys of a key
+        """
         for i in range(self.winreg.QueryInfoKey(key)[0]):
             yield self.winreg.OpenKey(key, self.winreg.EnumKey(key, i))
 
-    """ Iterate over values of a key
-    """
     def iter_vals(self, key):
+        """ Iterate over values of a key
+        """
         for i in range(self.winreg.QueryInfoKey(key)[1]):
             yield self.winreg.EnumValue(key, i)
 
-    """ Get MBED devices (connected or not)
-    """
     def get_mbed_devices(self):
+        """ Get MBED devices (connected or not)
+        """
         return [d for d in self.get_dos_devices() if 'VEN_MBED' in d[1].upper()]
 
-    """ Get DOS devices (connected or not)
-    """
     def get_dos_devices(self):
+        """ Get DOS devices (connected or not)
+        """
         ddevs = [dev for dev in self.get_mounted_devices() if 'DosDevices' in dev[0]]
         return [(d[0], self.regbin2str(d[1])) for d in ddevs]
 
-    """ Get all mounted devices (connected or not)
-    """
     def get_mounted_devices(self):
+        """ Get all mounted devices (connected or not)
+        """
         devs = []
         mounts = self.winreg.OpenKey(self.winreg.HKEY_LOCAL_MACHINE, r'SYSTEM\MountedDevices')
         for i in range(self.winreg.QueryInfoKey(mounts)[1]):
             devs += [self.winreg.EnumValue(mounts, i)]
         return devs
 
-    """ Decode registry binary to readable string
-    """
     def regbin2str(self, binary):
+        """ Decode registry binary to readable string
+        """
         string = ''
         for i in range(0, len(binary), 2):
             # binary[i] is str in Python2 and int in Python3
