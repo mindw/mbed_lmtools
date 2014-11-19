@@ -47,7 +47,7 @@ class LmToolsUbuntu(LmToolsBase):
                 ['*not detected', 'sde', '/media/usb2', '/dev/ttyACM3', 'usb-MBED_microcontroller_066CFF534951775087112139-0:0 -> ../../sde']
             ]
 
-            MBED
+            MBED format
             {
                 'mount_point' : <>,
                 'serial_port' : <>,
@@ -55,20 +55,8 @@ class LmToolsUbuntu(LmToolsBase):
                 'platform_name' : <>,
             }
 
-            TIDS
+            TIDS format
             {
-                "0671": "NUCLEO_F103RB",
-                "066E": "NUCLEO_F302R8",
-                "066E": "NUCLEO_L152RE",
-                "066F": "NUCLEO_L053R8",
-                "0720": "NUCLEO_F401RE",
-                "066C": "NUCLEO_F030R8",
-                "0670": "NUCLEO_F072RB",
-                "0674": "NUCLEO_F334R8",
-                "066A": "NUCLEO_F411RE",
-                "1010": "LPC1768",
-                "1040": "LPC11U24",
-                "1050": "LPC812",
                 "1168": "LPC11U68",
                 "1549": "LPC1549",
                 "1070": "NRF51822",

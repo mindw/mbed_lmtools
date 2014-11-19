@@ -68,7 +68,7 @@ class LmToolsWin7(LmToolsBase):
         com is not detected, we still get the rest of info like mount point etc.)
     """
     def get_mbed_com_port(self, id):
-        self.winreg.Enum = self.winreg.OpenKey(self.winreg.HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Enum')
+        self.winreg.Enum = self.winreg.OpenKey(self.winreg.HKEY_LOCAL_MACHINE, r'SYSTEM\CurrentControlSet\Enum')
         usb_devs = self.winreg.OpenKey(self.winreg.Enum, 'USB')
 
         # first try to find all devs keys (by id)
@@ -154,22 +154,22 @@ class LmToolsWin7(LmToolsBase):
     """
     def get_mounted_devices(self):
         devs = []
-        mounts = self.winreg.OpenKey(self.winreg.HKEY_LOCAL_MACHINE, 'SYSTEM\MountedDevices')
+        mounts = self.winreg.OpenKey(self.winreg.HKEY_LOCAL_MACHINE, r'SYSTEM\MountedDevices')
         for i in range(self.winreg.QueryInfoKey(mounts)[1]):
             devs += [self.winreg.EnumValue(mounts, i)]
         return devs
 
     """ Decode registry binary to readable string
     """
-    def regbin2str(self, bin):
+    def regbin2str(self, binary):
         string = ''
-        for i in range(0, len(bin), 2):
-            # bin[i] is str in Python2 and int in Python3
-            if isinstance(bin[i], int):
-                if bin[i] < 128:
-                    string += chr(bin[i])
-            elif isinstance(bin[i], str):
-                string += bin[i]
+        for i in range(0, len(binary), 2):
+            # binary[i] is str in Python2 and int in Python3
+            if isinstance(binary[i], int):
+                if binary[i] < 128:
+                    string += chr(binary[i])
+            elif isinstance(binary[i], str):
+                string += binary[i]
             else:
                 string = None
                 break

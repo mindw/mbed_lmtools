@@ -15,6 +15,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import json
+
+
 class LmToolsBase:
     """ Base class for lmtools used by test suite
     """
@@ -54,7 +57,6 @@ class LmToolsBase:
             Sets self.manufacture_ids with mapping between manufacturers' ids and platform name.
         """
         self.manufacture_ids = {}   # TODO: load this values from file
-        pass
 
     def err(self, text):
         """ Prints error messages
@@ -88,7 +90,7 @@ class LmToolsBase:
 
     # Private functions supporting API
 
-    def get_json_data_from_file(json_spec_filename, verbose=False):
+    def get_json_data_from_file(self, json_spec_filename, verbose=False):
         """ Loads from file JSON formatted string to data structure
             @return None if JSON can be loaded
         """
@@ -99,7 +101,9 @@ class LmToolsBase:
                     result = json.load(data_file)
                 except ValueError as json_error_msg:
                     result = None
-                    print "Error parsing TID file(%s): %s" % (json_spec_filename, json_error_msg)
+                    if verbose:
+                        print "Error parsing TID file(%s): %s" % (json_spec_filename, json_error_msg)
         except IOError as fileopen_error_msg:
-            print "Warning: %s" % (fileopen_error_msg)
+            if verbose:
+                print "Warning: %s" % (fileopen_error_msg)
         return result
