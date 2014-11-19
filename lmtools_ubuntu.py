@@ -34,6 +34,51 @@ class LmToolsUbuntu(LmToolsBase):
         self.mount_media_pattern = "^/[a-zA-Z0-9/]* on (/[a-zA-Z0-9/]*) "
 
     def list_mbeds(self):
+        """ Function returns mbed list with platform names if possible
+            all_devices =
+            [
+                ['*not detected', 'sdi', '/media/usb3', '/dev/ttyACM7', 'usb-MBED_microcontroller_066EFF534951775087215736-0:0 -> ../../sdi'],
+                ['*not detected', 'sdg', '/media/usb5', '/dev/ttyACM5', 'usb-MBED_microcontroller_066EFF525257775087141721-0:0 -> ../../sdg'],
+                ['*not detected', 'sdf', '/media/przemek/NUCLEO', '/dev/ttyACM4', 'usb-MBED_microcontroller_0671FF534951775087131543-0:0 -> ../../sdf'],
+                ['*not detected', 'sdd', '/media/usb4', '/dev/ttyACM2', 'usb-MBED_microcontroller_0670FF494951785087152739-0:0 -> ../../sdd'],
+                ['*not detected', 'sdb', '/media/usb0', '/dev/ttyACM0', 'usb-MBED_microcontroller_0674FF484951775087083114-0:0 -> ../../sdb'],
+                ['*not detected', 'sdh', '/media/usb6', '/dev/ttyACM6', 'usb-MBED_microcontroller_066FFF525257775087155144-0:0 -> ../../sdh'],
+                ['*not detected', 'sdc', '/media/usb1', '/dev/ttyACM1', 'usb-MBED_microcontroller_066AFF494956805087155327-0:0 -> ../../sdc'],
+                ['*not detected', 'sde', '/media/usb2', '/dev/ttyACM3', 'usb-MBED_microcontroller_066CFF534951775087112139-0:0 -> ../../sde']
+            ]
+
+            MBED
+            {
+                'mount_point' : <>,
+                'serial_port' : <>,
+                'target_id' : <>,
+                'platform_name' : <>,
+            }
+
+            TIDS
+            {
+                "0671": "NUCLEO_F103RB",
+                "066E": "NUCLEO_F302R8",
+                "066E": "NUCLEO_L152RE",
+                "066F": "NUCLEO_L053R8",
+                "0720": "NUCLEO_F401RE",
+                "066C": "NUCLEO_F030R8",
+                "0670": "NUCLEO_F072RB",
+                "0674": "NUCLEO_F334R8",
+                "066A": "NUCLEO_F411RE",
+                "1010": "LPC1768",
+                "1040": "LPC11U24",
+                "1050": "LPC812",
+                "1168": "LPC11U68",
+                "1549": "LPC1549",
+                "1070": "NRF51822",
+                "0200": "KL25Z",
+                "0220": "KL46Z",
+                "0230": "K20D50M",
+                "0240": "K64F"
+            }
+
+        """
         # We harness information about what is mounted and connected to serial ports
         disk_ids = self.get_dev_by_id('disk')
         serial_ids = self.get_dev_by_id('serial')
@@ -41,32 +86,33 @@ class LmToolsUbuntu(LmToolsBase):
 
         # Extra data to identify mbeds by target_id
         tids = self.manufacture_ids
+
+        tids = {
+                "0671": "NUCLEO_F103RB",
+                "066E": "NUCLEO_F302R8",
+                "066E": "NUCLEO_L152RE",
+                "066F": "NUCLEO_L053R8",
+                "0720": "NUCLEO_F401RE",
+                "066C": "NUCLEO_F030R8",
+                "0670": "NUCLEO_F072RB",
+                "0674": "NUCLEO_F334R8",
+                "066A": "NUCLEO_F411RE",
+                "1010": "LPC1768",
+                "1040": "LPC11U24",
+                "1050": "LPC812",
+                "1168": "LPC11U68",
+                "1549": "LPC1549",
+                "1070": "NRF51822",
+                "0200": "KL25Z",
+                "0220": "KL46Z",
+                "0230": "K20D50M",
+                "0240": "K64F"
+            }
+
         # Listing known and undetected / orphan devices
-        mbeds = self.get_(tids, disk_ids, serial_ids, mount_ids)
+        mbeds = self.get_detected(tids, disk_ids, serial_ids, mount_ids)
         orphans = self.get_not_detected(tids, disk_ids, serial_ids, mount_ids)
         all_devices = mbeds + orphans
-
-        """
-        all_devices =
-        [
-            ['*not detected', 'sdi', '/media/usb3', '/dev/ttyACM7', 'usb-MBED_microcontroller_066EFF534951775087215736-0:0 -> ../../sdi'],
-            ['*not detected', 'sdg', '/media/usb5', '/dev/ttyACM5', 'usb-MBED_microcontroller_066EFF525257775087141721-0:0 -> ../../sdg'],
-            ['*not detected', 'sdf', '/media/przemek/NUCLEO', '/dev/ttyACM4', 'usb-MBED_microcontroller_0671FF534951775087131543-0:0 -> ../../sdf'],
-            ['*not detected', 'sdd', '/media/usb4', '/dev/ttyACM2', 'usb-MBED_microcontroller_0670FF494951785087152739-0:0 -> ../../sdd'],
-            ['*not detected', 'sdb', '/media/usb0', '/dev/ttyACM0', 'usb-MBED_microcontroller_0674FF484951775087083114-0:0 -> ../../sdb'],
-            ['*not detected', 'sdh', '/media/usb6', '/dev/ttyACM6', 'usb-MBED_microcontroller_066FFF525257775087155144-0:0 -> ../../sdh'],
-            ['*not detected', 'sdc', '/media/usb1', '/dev/ttyACM1', 'usb-MBED_microcontroller_066AFF494956805087155327-0:0 -> ../../sdc'],
-            ['*not detected', 'sde', '/media/usb2', '/dev/ttyACM3', 'usb-MBED_microcontroller_066CFF534951775087112139-0:0 -> ../../sde']
-        ]
-
-        MBED
-        {
-            'mount_point' : <>,
-            'serial_port' : <>,
-            'target_id' : <>,
-            'platform_name' : <>,
-        }
-        """
 
         result = []
         tidhex = re.compile(r'_([0-9a-fA-F]+)')
@@ -137,7 +183,7 @@ class LmToolsUbuntu(LmToolsBase):
                     return mbed_dev_serial
         return None
 
-    def get_(self, tids, disk_list, serial_list, mount_list):
+    def get_detected(self, tids, disk_list, serial_list, mount_list):
         """ Find all known mbed devices
         """
         # Regular expr. formulas
