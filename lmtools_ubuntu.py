@@ -87,28 +87,6 @@ class LmToolsUbuntu(LmToolsBase):
         # Extra data to identify mbeds by target_id
         tids = self.manufacture_ids
 
-        tids = {
-                "0671": "NUCLEO_F103RB",
-                "066E": "NUCLEO_F302R8",
-                "066E": "NUCLEO_L152RE",
-                "066F": "NUCLEO_L053R8",
-                "0720": "NUCLEO_F401RE",
-                "066C": "NUCLEO_F030R8",
-                "0670": "NUCLEO_F072RB",
-                "0674": "NUCLEO_F334R8",
-                "066A": "NUCLEO_F411RE",
-                "1010": "LPC1768",
-                "1040": "LPC11U24",
-                "1050": "LPC812",
-                "1168": "LPC11U68",
-                "1549": "LPC1549",
-                "1070": "NRF51822",
-                "0200": "KL25Z",
-                "0220": "KL46Z",
-                "0230": "K20D50M",
-                "0240": "K64F"
-            }
-
         # Listing known and undetected / orphan devices
         mbeds = self.get_detected(tids, disk_ids, serial_ids, mount_ids)
         orphans = self.get_not_detected(tids, disk_ids, serial_ids, mount_ids)
@@ -191,14 +169,6 @@ class LmToolsUbuntu(LmToolsBase):
 
         # Find for all disk connected all MBED ones we know about from TID list
         disk_hex_ids = self.get_disk_hex_ids(disk_list)
-
-        # TODO: maybe not needed
-        serial_hex_ids = []
-        for sl in serial_list:
-            m = hup.search(sl)
-            if m and len(m.groups()):
-                serial_hex_ids.append(m.group(1))
-
         map_tid_to_mbed = self.get_tid_mbed_name_remap(tids)
 
         result = []
@@ -206,7 +176,7 @@ class LmToolsUbuntu(LmToolsBase):
         # Search if we have
         for dhi in disk_hex_ids.keys():
             for mttm in map_tid_to_mbed.keys():
-                if dhi in mttm:
+                if dhi.startswith(mttm):
                     mbed_name = map_tid_to_mbed[mttm]
                     mbed_dev_disk = ""
                     mbed_dev_serial = ""
@@ -254,12 +224,7 @@ class LmToolsUbuntu(LmToolsBase):
     def get_tid_mbed_name_remap(self, tids):
         """ Remap to get mapping:  ID -> mbed name
         """
-        map_tid_to_mbed = {}
-        if tids:
-            for key in tids:
-                for v in tids[key]:
-                    map_tid_to_mbed[v] = key
-        return map_tid_to_mbed
+        return tids
 
     def get_dev_name(self, link):
         """ Get device name from symbolic link list
