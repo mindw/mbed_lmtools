@@ -46,7 +46,7 @@ def lmtools_factory():
     return result
 
 def lmtools_os_info():
-    """ returns information about running OS
+    """ Returns information about running OS
     """
     result = (os.name,
               platform.system(),
