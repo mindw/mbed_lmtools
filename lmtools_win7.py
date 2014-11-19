@@ -34,11 +34,11 @@ class LmToolsWin7(LmToolsBase):
             import winreg
         self.winreg = winreg
 
-    def list_mbeds(self, manufact_ids={}):
+    def list_mbeds(self):
         """Returns connected mbeds as an mbeds dictionary
         """
         mbeds = []
-        for mbed in self.discover_connected_mbeds(manufact_ids):
+        for mbed in self.discover_connected_mbeds(self.manufacture_ids):
             d = {}
             d['mount_point']   = mbed[0] if mbed[0] else None
             d['target_id']     = mbed[1] if mbed[1] else None
