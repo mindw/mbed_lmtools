@@ -61,6 +61,26 @@ class LmToolsBase:
         """
         print text
 
+    def __str__(self):
+        """ Default printing with some sql table like decorators
+        """
+        from prettytable import PrettyTable
+        result = ''
+        mbeds = self.list_mbeds()
+        if mbeds is not None:
+            columns = ['platform_name', 'mount_point', 'serial_port', 'target_id']
+            pt = PrettyTable(columns)
+            for col in columns:
+                pt.align[col] = 'l'
+
+            for mbed in mbeds:
+                row = []
+                for col in columns:
+                    row.append(mbed[col] if col in mbed and mbed[col] is not None else 'unknown')
+                pt.add_row(row)
+            result = pt.get_string()
+        return result
+
     # Private functions supporting API
 
     def get_json_data_from_file(json_spec_filename, verbose=False):
