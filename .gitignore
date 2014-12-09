@@ -12,6 +12,3 @@ MANIFEST
 # Packages
 *.egg
 *.egg-info
-
-# JSON metadata
-.json
