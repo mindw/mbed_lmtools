@@ -7,15 +7,15 @@ import os
 from distutils.core import setup
 from setuptools import find_packages
 
-
-LICENSE = open('LICENSE').read()
 DESCRIPTION = "Command line tools used to detect connected mbed enabled devices. See http://mbed.org for details"
 OWNER_NAMES = 'Przemyslaw Wirkus, Johan Seferidis'
 OWNER_EMAILS = 'Przemyslaw.Wirkus@arm.com, Johan.Seferidis@arm.com'
 
+
 # Utility function to cat in a file (used for the README)
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
 
 setup(name='mbed-lmtools',
       version='0.1.2',
@@ -27,7 +27,7 @@ setup(name='mbed-lmtools',
       maintainer_email=OWNER_EMAILS,
       url='https://github.com/mbedmicro/mbed',
       packages=find_packages(),
-      license=LICENSE,
+      license="Apache-2.0",
       entry_points={
         "console_scripts": [
             "lm=lmcmd:main",
