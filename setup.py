@@ -30,7 +30,7 @@ setup(name='mbed-lmtools',
       license="Apache-2.0",
       entry_points={
         "console_scripts": [
-            "lm=lmcmd:main",
+            "lm=lmtools:main",
         ],
       },
       install_requires=["PrettyTable>=0.7.2"])
