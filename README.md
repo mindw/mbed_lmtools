@@ -1,5 +1,5 @@
 ## Description
-mbed-lmtools are module used to list mbed enabled devices connected to host computer.
+mbed-lmtools is module used to list mbed enabled devices connected to host computer.
 Currently lmtools support these OSs:
 * Windows 7,
 * Ubuntu
