@@ -136,7 +136,7 @@ unknown        G:        COM93        0231020337317E7FCACD83B6
 ```
 # lmtools as Python module
 Please note that when you install lmtools you get not only command line tools but also siple Python libary used to detect connected mbed enabled devices:
-## Importing lmtools
+## lmtools API examples
 Run Python interpreter from command line:
 ```
 python
@@ -147,6 +147,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> import lmtools
 >>> from lmtools import lmtools_factory
 ```
+### Printing functionality
 ```
 >>> lm = lmtools_factory()
 >>> print lm # use of __str__()
@@ -161,6 +162,7 @@ platform_name        mount_point        serial_port        target_id
 unknown              F:                 COM58              107002161FE6E019E20F0F91
 unknown              G:                 COM93              0231020337317E7FCACD83B6
 ```
+### Access detected devices' descriptors
 ```
 >>> d = lm.list_mbeds()
 >>> print d
