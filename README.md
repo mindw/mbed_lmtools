@@ -134,3 +134,55 @@ lm -s
 unknown        F:        COM58        107002161FE6E019E20F0F91
 unknown        G:        COM93        0231020337317E7FCACD83B6
 ```
+# lmtools as Python module
+Please note that when you install lmtools you get not only command line tools but also siple Python libary used to detect connected mbed enabled devices:
+## Importing lmtools
+Run Python interpreter from command line:
+```
+python
+```
+```
+Python 2.7.8 (default, Jun 30 2014, 16:03:49) [MSC v.1500 32 bit (Intel)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import lmtools
+>>> from lmtools import lmtools_factory
+```
+```
+>>> lm = lmtools_factory()
+>>> print lm # use of __str__()
+platform_name        mount_point        serial_port        target_id
+unknown              F:                 COM58              107002161FE6E019E20F0F91
+unknown              G:                 COM93              0231020337317E7FCACD83B6
+```
+```
+>>> s = lm.get_string()
+>>> print s
+platform_name        mount_point        serial_port        target_id
+unknown              F:                 COM58              107002161FE6E019E20F0F91
+unknown              G:                 COM93              0231020337317E7FCACD83B6
+```
+```
+>>> d = lm.list_mbeds()
+>>> print d
+[{'platform_name': None, 'mount_point': 'F:', 'target_id': '107002161FE6E019E20F0F91', 'serial_port': u'COM58'}, {'platform_name': None, 'mount_point': 'G:', 'target_id': '0231020337317E7FCACD83B6', 'serial_port': u'COM93'}]
+```
+```
+>>> import json
+>>> json.dumps(d, indent=4)
+'[\n    {\n        "platform_name": null, \n        "mount_point": "F:", \n        "target_id": "107002161FE6E019E20F0F91", \n        "serial_port": "COM58"\n    }, \n    {\n        "platform_name": null, \n        "mount_point": "G:", \n        "target_id": "0231020337317E7FCACD83B6", \n        "serial_port": "COM93"\n    }\n]'
+>>> print json.dumps(d, indent=4)
+[
+    {
+        "platform_name": null,
+        "mount_point": "F:",
+        "target_id": "107002161FE6E019E20F0F91",
+        "serial_port": "COM58"
+    },
+    {
+        "platform_name": null,
+        "mount_point": "G:",
+        "target_id": "0231020337317E7FCACD83B6",
+        "serial_port": "COM93"
+    }
+]
+```
