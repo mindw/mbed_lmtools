@@ -20,6 +20,13 @@ git clone <link to this repo>
 ```
 cd mbed_lmtools
 ```
+* Install package directly:
+```
+python setup.py install
+```
+
+or 
+
 * Create a Python's pip package by calling a command:
 ```
 python setup.py sdist
