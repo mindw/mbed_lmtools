@@ -6,9 +6,8 @@ import sys
 import optparse
 import platform
 
-from lmtools_win7 import LmToolsWin7
-from lmtools_ubuntu import LmToolsUbuntu
-
+from lmtools.lmtools_win7 import LmToolsWin7
+from lmtools.lmtools_ubuntu import LmToolsUbuntu
 
 def lmtools_factory():
     """ Factory producing lmtools depending on OS it is working on
@@ -48,12 +47,15 @@ def cmd_parser_setup():
                       action="store_true",
                       help='Verbose mode (prints some extra information)')
 
-    (opts, args) = parser.parse_args()
-    return (opts, args)
-
+    opts, args = parser.parse_args()
+    return opts, args
 
 def main():
-    (opts, args) = cmd_parser_setup()
+    opts, args = cmd_parser_setup()
     lmtools = lmtools_factory()
-    lmtools.load_mbed_description('meta/targets.json')
+    lmtools.load_mbed_description()
+    
     print lmtools.get_string(border=not opts.simple, header=not opts.simple)
+
+if __name__ == '__main__':
+    main()

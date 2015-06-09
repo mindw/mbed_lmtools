@@ -12,3 +12,5 @@ MANIFEST
 # Packages
 *.egg
 *.egg-info
+
+.idea/

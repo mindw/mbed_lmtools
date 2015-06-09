@@ -15,5 +15,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from .main import main
-from .main import lmtools_factory
+from .__main__ import (main, lmtools_factory)
+

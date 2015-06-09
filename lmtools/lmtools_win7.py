@@ -112,10 +112,10 @@ class LmToolsWin7(LmToolsBase):
         """ Returns [(<mbed_mount_point>, <mbed_id>), ..]
         """
         mbeds = []
-        for mbed in self.get_mbed_devices():
-            mountpoint = re.match('.*\\\\(.:)$', mbed[0]).group(1)
-            # id is a hex string with 10-36 chars
-            id = re.search('[0-9A-Fa-f]{10,36}', mbed[1]).group(0)
+        for mount, data in self.get_mbed_devices():
+            mountpoint = re.match('.*\\\\(.:)$', mount).group(1)
+            # id is the instance id (3rd element) minus the counter (&0)
+            id = data.split('#')[2].split('&')[0]
             mbeds += [(mountpoint, id)]
         return mbeds
 

@@ -16,9 +16,9 @@ limitations under the License.
 """
 
 import json
+from pkg_resources import resource_string
 
-
-class LmToolsBase:
+class LmToolsBase(object):
     """ Base class for lmtools used by test suite
     """
     def __init__(self):
@@ -52,12 +52,19 @@ class LmToolsBase:
         return None
 
     # Private part, methods used to drive interface functions
-    def load_mbed_description(self, file_name):
+    def load_mbed_description(self, file_name=None):
         """ Loads JSON file with mbeds' description (mapping between target id and platform name)
             Sets self.manufacture_ids with mapping between manufacturers' ids and platform name.
         """
-        self.manufacture_ids = {}   # TODO: load this values from file
 
+        if not file_name:
+            targets_raw = resource_string(__name__, 'meta/targets.json')
+        else:
+            with open(file_name) as f:
+                targets_raw = f.read()
+            
+        self.manufacture_ids = json.loads(targets_raw)
+        
     def err(self, text):
         """ Prints error messages
         """
@@ -68,25 +75,24 @@ class LmToolsBase:
         """
         return self.get_string()
 
-    def get_string(self, border=False, header=True, padding_width=0, sortby='platform_name'):
+    def get_string(self, border=False, header=True, padding_width=1, sortby='platform_name'):
         """ Printing with some sql table like decorators
         """
         from prettytable import PrettyTable
         from prettytable import PLAIN_COLUMNS
         result = ''
         mbeds = self.list_mbeds()
-        if mbeds is not None:
+        if mbeds:
             columns = ['platform_name', 'mount_point', 'serial_port', 'target_id']
             pt = PrettyTable(columns)
-            for col in columns:
-                pt.align[col] = 'l'
+            pt.align = 'l'
 
             for mbed in mbeds:
                 row = []
                 for col in columns:
-                    row.append(mbed[col] if col in mbed and mbed[col] is not None else 'unknown')
+                    row.append(mbed.get(col) or 'unknown')
                 pt.add_row(row)
-            pt.set_style(PLAIN_COLUMNS)
+            #pt.set_style(PLAIN_COLUMNS)
             result = pt.get_string(border=border, header=header, padding_width=padding_width, sortby=sortby)
         return result
 
