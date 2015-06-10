@@ -20,7 +20,11 @@ OWNER_EMAILS = 'Przemyslaw.Wirkus@arm.com, Johan.Seferidis@arm.com'
 
 setup(
     name='mbed-lmtools',
-    version='0.1.2',
+    use_scm_version={
+        'local_scheme': 'dirty-tag',
+        'write_to': 'lmtools/_version.py'
+    },
+    setup_requires=['setuptools_scm'],
     description=DESCRIPTION,
     long_description=long_description,
     author=OWNER_NAMES,

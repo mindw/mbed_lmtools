@@ -75,3 +75,5 @@ docs/_build/
 # PyBuilder
 target/
 
+
+lmtools/_version.py

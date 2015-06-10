@@ -16,4 +16,4 @@ limitations under the License.
 """
 
 from .__main__ import (main, lmtools_factory)
-
+from ._version import version as __version__
